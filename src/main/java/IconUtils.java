@@ -1,5 +1,4 @@
 import javafx.scene.image.Image;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

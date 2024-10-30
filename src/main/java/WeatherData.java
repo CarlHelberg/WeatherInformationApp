@@ -1,6 +1,5 @@
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -48,7 +47,7 @@ public class WeatherData {
         this.unit = unit; // no need to check, can just set
     }
 
-    // Full constructor, generated with IDE, kept for completeness
+//    Defines the WeatherData object's attributes
     public WeatherData(double temperature, String humidity, String windSpeed, String conditions, String icon, String latitude, String longitude, String countryCode, String zipCode) {
         this.temperature = temperature;
         this.humidity = humidity;

@@ -69,7 +69,7 @@ public class WeatherUIController implements Initializable {
         //Add key press listener to location input text field
         locationInput.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ENTER){ // listens for enter key
-                updateUI();
+                showWeatherData();
             }
         });
     }
@@ -85,7 +85,6 @@ public class WeatherUIController implements Initializable {
 
     @FXML
     private void clearFields() {
-        System.out.println("Reset was clicked");
         locationInput.setText("");
         countryCode.setText("");
         unitSelector.setValue("Metric");
@@ -102,19 +101,15 @@ public class WeatherUIController implements Initializable {
         try {
             // Fetch weather data and update UI with the response
             if (!newlocale.equals("")){
-                System.out.println("Trying to Fetching weather, locationInfo text not null: ");
-                System.out.println("currently set location: " + weatherData.getLocale() + "New location: "+ newlocale);
                 weatherData = new WeatherData(newlocale , unitSelector.getValue());
                 weatherData.fetchWeather();
                 showWeatherData();
             }else if (!zipCode.getText().equals("") && !countryCode.getText().equals("")) {
-                System.out.println("Trying to Fetching weather from zip,info provided: zip:"+zipCode+" & countryCode: "+countryCode);
                 weatherData = new WeatherData(zipCode.getText(), countryCode.getText() , unitSelector.getValue());
                 weatherData.fetchWeatherViaZip();
                 showWeatherData();
             }
             else {
-                System.out.println("Inside catch onFetchWeather, trying  coordinates");
                 try {
                     weatherData = new WeatherData(longInput.getText(), latInput.getText() , unitSelector.getValue());
                     weatherData.fetchWeatherViaCoords();
@@ -124,38 +119,11 @@ public class WeatherUIController implements Initializable {
                 }
             }
 
-            System.out.println("After Fetching weather...");
         } catch (Exception ex) {
             showErrorDialog("Failed to fetch weather data. Please try again." + ex); // Error handling
         }
     }
 
-    // Almost the same as showWeatherData(), this function gets input values from
-    private void updateUI() {
-        //if user enters nothing into cityName field
-        if(locationInput.getText().equals("") || (longInput.getText().equals("") && latInput.getText().equals(""))){
-            if (zipCode.getText().equals("")) {
-                showErrorModal("A City name or Coordinates are required");
-            }
-        } else {
-            try {
-                System.out.println("Trying to Update UI");
-                errors.setText("");
-                this.localeInformation = locale.getText().trim();
-                locale.setText((locationInput.getText().trim()).toUpperCase());
-                weatherData = new WeatherData(localeInformation , unitSelector.getValue());
-                System.out.println("Trying to show weather data");
-                weatherData.fetchWeather();
-                showWeatherData();
-            }catch(Exception e){
-                System.out.println("failed to Update UI");
-                locale.setText("Error!!");
-                locale.setTextFill(Color.RED);
-                showErrorModal("City with the given name was not found.");
-                clearFields();
-            }
-        }
-    }
 
     private String[] displayUnit(){
         switch (unitSelector.getValue().toLowerCase()){
