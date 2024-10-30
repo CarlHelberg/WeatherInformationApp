@@ -6,13 +6,13 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class IconUtils {
-    private static final String ICON_FOLDER = "icons/";
+    private static final String ICON_FOLDER = "icons/"; // set path to icons folder
 
-    public static Image getWeatherIcon(String iconCode) {
-        String iconPath = ICON_FOLDER + iconCode + ".png";
-        File iconFile = new File(iconPath);
+    public static Image getWeatherIcon(String iconCode) { // icon and icon code comes from API
+        String iconPath = ICON_FOLDER + iconCode + ".png"; // build complete icon path
+        File iconFile = new File(iconPath); // define file
 
-        if (!iconFile.exists()) {
+        if (!iconFile.exists()) { // Download ico if it doesn't exist
             try (InputStream in = new URL("https://openweathermap.org/img/wn/" + iconCode + ".png").openStream();
                  FileOutputStream out = new FileOutputStream(iconFile)) {
 
@@ -27,6 +27,6 @@ public class IconUtils {
             }
         }
 
-        return new Image(iconFile.toURI().toString());
+        return new Image(iconFile.toURI().toString()); // whether downloaded or exists, returns the icon as image
     }
 }

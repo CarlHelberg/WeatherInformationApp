@@ -8,14 +8,12 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/WeatherUI.fxml"));
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/WeatherUI.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/WeatherUI.fxml")); // load the file we use to declare elements
 
             // Set window options
-//        primaryStage.setScene(new Scene(loader.load()));
             primaryStage.setTitle("Weather Information App");
             primaryStage.setScene(new Scene(root, 1050, 670));
-            primaryStage.getScene().getStylesheets().addAll(getClass().getResource("/styles/style.css").toExternalForm());
+            primaryStage.getScene().getStylesheets().addAll(getClass().getResource("/styles/style.css").toExternalForm()); // add css file
             primaryStage.setResizable(false);
             primaryStage.sizeToScene();
             primaryStage.show();

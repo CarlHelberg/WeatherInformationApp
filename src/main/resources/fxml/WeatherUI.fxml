@@ -122,30 +122,30 @@
 
 
 <!--        Right hand side LABEL-->
-        <Label alignment="CENTER" layoutX="825.0" layoutY="75.0" prefHeight="31.0" prefWidth="104.0" text="WIND SPEED :"
+        <Label fx:id="windSpeedLabel" alignment="CENTER" layoutX="825.0" layoutY="75.0" prefHeight="31.0" prefWidth="104.0" text="WIND SPEED :"
                textFill="#22448a">
             <font>
                 <Font name="System Bold" size="15.0"/>
             </font>
         </Label>
-        <Label alignment="CENTER" layoutX="825.0" layoutY="150.0" prefHeight="31.0" prefWidth="115.0" text="CLOUD COVER :"
+        <Label fx:id="cloudCoverLabel" alignment="CENTER" layoutX="825.0" layoutY="150.0" prefHeight="31.0" prefWidth="115.0" text="CLOUD COVER :"
                textFill="#22448a">
             <font>
                 <Font name="System Bold" size="15.0"/>
             </font>
         </Label>
-        <Label alignment="CENTER" layoutX="825.0" layoutY="225.0" prefHeight="31.0" prefWidth="104.0" text="PRESSURE:" textFill="#22448a">
+        <Label fx:id="pressureLabel" alignment="CENTER" layoutX="825.0" layoutY="225.0" prefHeight="31.0" prefWidth="104.0" text="PRESSURE:" textFill="#22448a">
             <font>
                 <Font name="System Bold" size="15.0"/>
             </font>
         </Label>
-        <Label alignment="CENTER" layoutX="825.0" layoutY="300.0" prefHeight="31.0" prefWidth="104.0" text="HUMIDITY:" textFill="#22448a">
+        <Label fx:id="humidityLabel" alignment="CENTER" layoutX="825.0" layoutY="300.0" prefHeight="31.0" prefWidth="104.0" text="HUMIDITY:" textFill="#22448a">
             <font>
                 <Font name="System Bold" size="15.0"/>
             </font>
         </Label>
         <!--        Right hand side header  -->
-        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="750.0" layoutY="7.0" prefHeight="40.0"
+        <Label fx:id="additionalInfoLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="750.0" layoutY="7.0" prefHeight="40.0"
                prefWidth="256.0" text="ADDITIONAL INFORMATION" textAlignment="CENTER" textFill="#22448a">
             <font>
                 <Font name="System Bold" size="18.0"/>
@@ -159,16 +159,6 @@
                             <Font name="System Bold" size="15.0" />
                         </font>
                     </Label>
-
-<!--        Right hand side placeholder  -->
-        <JFXTextField id="txtField" fx:id="invis" alignment="CENTER" editable="false" focusColor="#36417800"
-                      labelFloat="true" layoutX="872.0" layoutY="54.0"
-                      style="-fx-prompt-text-fill: #fff; -fx-text-fill: #fff;" unFocusColor="#ffffff00">
-            <font>
-                <Font name="System Bold" size="15.0"/>
-            </font>
-        </JFXTextField>
-<!--   ^^^^^^^^^^^^^^^ END Right hand side placeholder ^^^^^^^^^^^^^^^^^^^^^^-->
 
 
 <!--        Right hand side data  -->

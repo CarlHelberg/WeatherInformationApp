@@ -7,85 +7,72 @@ import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class WeatherUIController implements Initializable {
     // UI components for user interaction and display
-    @FXML private JFXTextField countryCode, locationInput, longInput, latInput, invis, zipCode;
-    @FXML private Label locale, temperature, day, windSpeed, cloudCover, pressure, humidity, conditions ,errors;
+    @FXML private JFXTextField countryCode, locationInput, longInput, latInput, zipCode; // These are editable fields that we use to get input.
+    @FXML private Label additionalInfoLabel,weatherInfoLabel,windSpeedLabel, cloudCoverLabel, pressureLabel, humidityLabel; // These are actual labels, headers of a sort.
+    @FXML private Label locale, temperature, day, windSpeed, cloudCover, pressure, humidity, conditions ,errors; // These are used to display data from the weather API, not editable
     @FXML private ImageView weatherIcon;
     @FXML private VBox mainLayout;
-    @FXML private JFXComboBox<String> unitSelector;
-    @FXML private JFXTextArea history;
-    @FXML private JFXButton fetchWeather, reset;
+    @FXML private JFXComboBox<String> unitSelector; // Another input source
+    @FXML private JFXTextArea history; // non-editable history window
+    @FXML private JFXButton fetchWeather, reset; // Button input sources
 
 
 
-    private List<String> searchHistory;
+    private List<String> searchHistory; // Init the history
 
-    public WeatherData weatherData;
-    public String localeInformation;
+    public WeatherData weatherData; // Declare our main data holding object
+    public String localeInformation; // Declare the anticipated most used input source
 
     // Initialize the controller, weather service, and search history list
     public WeatherUIController() {
         searchHistory = new ArrayList<>();
-        //Constructor to set the initial city to Pune
+        //Constructor to set the initial city to pretoria (south africa) where I'm from
         this.localeInformation = "Pretoria";
     }
 
+    // On launch this initializing function will set default values and use *MY* default location, set on line 44
     public void initialize(URL location, ResourceBundle resources) {
         // Set up the unit selection options
         unitSelector.getItems().addAll("Metric", "Imperial");
-        unitSelector.setValue("Metric");
-        countryCode.setText("ZA");
-        locationInput.setText("Pretoria");
+        unitSelector.setValue("Metric"); // the best unit to use, so use it
+        countryCode.setText("ZA"); // South Africa Country Code
+        locationInput.setText("Pretoria"); //Default City entered in text area
         adjustBackgroundColor(); // Adjust background color based on time of day
 
-        errors.setText("");
-        weatherData = new WeatherData(localeInformation, unitSelector.getValue());
-//        invis.requestFocus();
+        errors.setText(""); // blank string to start with, acts as placeholder
+        weatherData = new WeatherData(localeInformation, unitSelector.getValue()); //start populating our weatherData with default values
 
-        //try catch block to see if there is internet and disabling ecery field
+        //try catch block to see if there is internet or compile issues
         try{
-            System.out.println("In try for init. " );
-            System.out.println(localeInformation );
-            weatherData.fetchWeather();
-            showWeatherData();
-        } catch (Exception e){
+            weatherData.fetchWeather(); // get weather based on collected input (default info in this case)
+            showWeatherData(); // This updates the UI with the values returned from the API
+        } catch (Exception e){ // error handling for initial launch problems
             locale.setText("Data not available");
-            locale.setTextFill(Color.TOMATO);
-            showErrorModal("Could be a connection problem, please retry.");
-//            clearFields();
+            locale.setTextFill(Color.RED);
+            showErrorModal("Failed to Initialize."); // show a modal that displays more info, could return e or error code
+            clearFields(); // Set input fields to empty strings
         }
-        //Set the city entered into textField on pressing enter on Keyboard
+        //Add key press listener to location input text field
         locationInput.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER){
+            if(e.getCode() == KeyCode.ENTER){ // listens for enter key
                 updateUI();
             }
         });
     }
-
-//    @FXML
-//    public void initialize() {
-//        // Set up the unit selection options
-//        unitSelector.getItems().addAll("Metric", "Imperial");
-//        unitSelector.setValue("Metric");
-//        locationInput.setText("Pretoria");
-//        adjustBackgroundColor(); // Adjust background color based on time of day
-//    }
 
     @FXML
     private void handleButtonClicks(javafx.event.ActionEvent e) {
@@ -143,13 +130,12 @@ public class WeatherUIController implements Initializable {
         }
     }
 
-    // Update UI with fetched weather data, displaying temperature, humidity, wind speed, and conditions
+    // Almost the same as showWeatherData(), this function gets input values from
     private void updateUI() {
         //if user enters nothing into cityName field
         if(locationInput.getText().equals("") || (longInput.getText().equals("") && latInput.getText().equals(""))){
             if (zipCode.getText().equals("")) {
                 showErrorModal("A City name or Coordinates are required");
-                return;
             }
         } else {
             try {
@@ -161,26 +147,14 @@ public class WeatherUIController implements Initializable {
                 System.out.println("Trying to show weather data");
                 weatherData.fetchWeather();
                 showWeatherData();
-//                bottomSet(false);
-                invis.requestFocus();
             }catch(Exception e){
                 System.out.println("failed to Update UI");
                 locale.setText("Error!!");
-                locale.setTextFill(Color.TOMATO);
+                locale.setTextFill(Color.RED);
                 showErrorModal("City with the given name was not found.");
                 clearFields();
-                invis.requestFocus();
             }
         }
-
-
-//        String weatherInfo = String.format("Temperature: %.1f°\nHumidity: %d%%\nWind Speed: %.1f m/s\nConditions: %s",
-//                data.getTemperature(), data.getHumidity(), data.getWindSpeed(), data.getConditions());
-//        weatherInfoLabel.setText(weatherInfo);
-
-        // Load and display the appropriate weather icon
-//        Image icon = IconUtils.getWeatherIcon(data.getWeatherIcon());
-//        weatherIcon.setImage(icon);
     }
 
     private String[] displayUnit(){
@@ -192,32 +166,52 @@ public class WeatherUIController implements Initializable {
         }
     }
 
+//Updates all the fields on the UI with the data returned for the weather
     public void showWeatherData(){
-        System.out.println("INSIDE SHOWW EATHER DATA! setting text in UI");
-//        System.out.println("1" + weatherData.getLocale() + " +-+ " +weatherData.getTemperature() + " +-+ " + weatherData.getDay() + " +-+ " + weatherData.getConditions()+ " +-+ " );
-        if (!weatherData.getLocale().equals("")) {
-            String location = weatherData.getLocale();
-            locale.setText(location.toUpperCase());
-            addToSearchHistory(location);
+        if (!weatherData.getLocale().equals("")) { // Checks if we already set the location from input
+            locale.setText(weatherData.getLocale().toUpperCase());
         }
-
-        temperature.setText(weatherData.getTemperature()+displayUnit()[0]);
+        // We need either the city name, or BOTH parts of the coordinates, at least
+        if(locationInput.getText().equals("") || (longInput.getText().equals("") && latInput.getText().equals(""))){
+            // If either of the below are empty after above fail, we can't get data
+            if (zipCode.getText().equals("") || countryCode.getText().equals("")) {
+                showErrorModal("A City name or Coordinates are required"); // We have no data to get weather with
+            }
+        }else { // This Else is the positive case where we have all the info we need
+            try { // build weatherData object
+                errors.setText("");
+                this.localeInformation = locale.getText().trim();
+                locale.setText((locationInput.getText().trim()).toUpperCase()); // checked above that this is not nil
+                weatherData = new WeatherData(localeInformation , unitSelector.getValue()); // construct object
+                // Call to get weather from API and further build data object
+                weatherData.fetchWeather();
+            }catch(Exception e){
+                locale.setText("Error!!");  // General Alert
+                locale.setTextFill(Color.RED);
+                showErrorModal("City with the given name was not found."); // popup with more info for the user
+                clearFields(); // reset fields to blank strings
+            }
+        }
+        // If the try-catch above succeeds we have the data we need and can display it
+        // Set the non-editable labels to display data
+        temperature.setText(weatherData.getTemperature()+displayUnit()[0]); // index 0 is Celsius/Fahrenheit
 
         day.setText(weatherData.getDay().toUpperCase());
         conditions.setText(weatherData.getConditions().toUpperCase());
-        addToSearchHistory(weatherData.getLocale());
         weatherIcon.setImage(IconUtils.getWeatherIcon(weatherData.getWeatherIcon()));
-        windSpeed.setText(weatherData.getWindSpeed()+" "+displayUnit()[1]);
+        windSpeed.setText(weatherData.getWindSpeed()+" "+displayUnit()[1]); //index 1 is  m/s for metric and mp/h for imperial
         cloudCover.setText(weatherData.getcloudCover()+"%");
         pressure.setText(weatherData.getPressure()+" hpa");
         humidity.setText(weatherData.getHumidity()+"%");
-        System.out.println("End of SHOWW EATHER DATA!");
-        adjustBackgroundColor();
+
+        addToSearchHistory(weatherData.getLocale()); // add text to search history with time stamp
+        adjustBackgroundColor(); // checks if background color needs to update
     }
 
+    // Popup window that gives more info on the failure.
     private void showErrorModal(String message) {
         errors.setText(message);
-        errors.setTextFill(Color.TOMATO);
+        errors.setTextFill(Color.RED);
         errors.setStyle("-fx-background-color: #fff; -fx-background-radius: 50px;");
 
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), errors);
@@ -226,7 +220,7 @@ public class WeatherUIController implements Initializable {
         fadeIn.play();
 
         fadeIn.setOnFinished(event -> {
-            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            PauseTransition pause = new PauseTransition(Duration.seconds(4));
             pause.play();
             pause.setOnFinished(event2 -> {
                 FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), errors);
@@ -240,21 +234,22 @@ public class WeatherUIController implements Initializable {
     // Adjusts the background color based on the current time (morning, afternoon, evening)
     private void adjustBackgroundColor() {
         LocalTime currentTime = LocalTime.now();
-        if (currentTime.isBefore(LocalTime.of(6, 0))) {
-            mainLayout.setStyle("-fx-background-color: #0b26f4;"); // Morning: light blue
-        } else if (currentTime.isBefore(LocalTime.of(8, 0))) {
-            mainLayout.setStyle("-fx-background-color: #549eab;"); // Afternoon: orange
-        } else if (currentTime.isBefore(LocalTime.of(12, 0))) {
-            mainLayout.setStyle("-fx-background-color: #3c81c3;"); // Afternoon: orange
-        } else if (currentTime.isBefore(LocalTime.of(17, 0))) {
-            mainLayout.setStyle("-fx-background-color: #e6df57;"); // Afternoon: orange
+        if (currentTime.isBefore(LocalTime.of(6, 0))) { // white-washed blue
+            mainLayout.setStyle("-fx-background-color: #0b26f4;");
+        } else if (currentTime.isBefore(LocalTime.of(8, 0))) { // light blue
+            mainLayout.setStyle("-fx-background-color: #549eab;");
+        } else if (currentTime.isBefore(LocalTime.of(12, 0))) { // sky blue
+            mainLayout.setStyle("-fx-background-color: #3c81c3;");
+        } else if (currentTime.isBefore(LocalTime.of(17, 0))) { // yellow or light orange
+            mainLayout.setStyle("-fx-background-color: #e6df57;");
         } else if (currentTime.isBefore(LocalTime.of(19, 0))) {
-            mainLayout.setStyle("-fx-background-color: #d19910;"); // Afternoon: orange
+            mainLayout.setStyle("-fx-background-color: #d19910;"); // orange
         }
 
         else {
-            mainLayout.setStyle("-fx-background-color: #0b26f4;"); // Evening: dark blue
+            mainLayout.setStyle("-fx-background-color: #3441a3;"); // Evening: dark blue
         }
+        updateTextColors(); // Edit text to be visible on different backgrounds
     }
 
     // Adds location and timestamp to the search history and updates the history label
@@ -269,5 +264,63 @@ public class WeatherUIController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+
+
+    // This method will be called from the update background function, mainly header labels
+    public void updateTextColors() {
+        // Get the current local time
+        LocalTime now = LocalTime.now();
+        boolean isNightTime = now.isAfter(LocalTime.of(19, 0)) || now.isBefore(LocalTime.of(6, 0));
+
+        // Set the text colors based on the time of day
+        String nightColor = "#b7b7b7"; // lighter grey on dark background
+        String defaultColor = "#22448a"; // darker during day
+
+        // Update label colors
+        if (isNightTime) {
+            setLabelColor(locale, nightColor);
+            setLabelColor(temperature, nightColor);
+            setLabelColor(weatherInfoLabel, nightColor);
+            setLabelColor(day, nightColor);
+            setLabelColor(windSpeedLabel, nightColor);
+            setLabelColor(cloudCoverLabel, nightColor);
+            setLabelColor(pressureLabel, nightColor);
+            setLabelColor(humidityLabel, nightColor);
+            setLabelColor(conditions, nightColor);
+            setLabelColor(additionalInfoLabel, nightColor);
+        } else {
+            setLabelColor(locale, defaultColor);
+            setLabelColor(temperature, defaultColor);
+            setLabelColor(weatherInfoLabel, defaultColor);
+            setLabelColor(day, defaultColor);
+            setLabelColor(windSpeedLabel, defaultColor);
+            setLabelColor(cloudCoverLabel, defaultColor);
+            setLabelColor(pressureLabel, defaultColor);
+            setLabelColor(humidityLabel, defaultColor);
+            setLabelColor(conditions, defaultColor);
+            setLabelColor(additionalInfoLabel, defaultColor);
+        }
+
+        // Update text field colors (assuming they should stay white)
+        updateTextFieldColors(isNightTime);
+    }
+
+    // Helper function that changes the values on the labels
+    private void setLabelColor(Label label, String color) {
+        if (label != null && label.getTextFill() != null) {
+            label.setTextFill(Color.web(color));
+        }
+    }
+
+    // Change text colours to a darker white colour for eye strain at night
+    private void updateTextFieldColors(boolean isNightTime) {
+        String textFieldColor = isNightTime ? "#b7b7b7" : "white";
+        countryCode.setStyle("-fx-text-fill: " + textFieldColor + "; -fx-prompt-text-fill: "+ textFieldColor + ";");
+        locationInput.setStyle("-fx-text-fill: " + textFieldColor + "; -fx-prompt-text-fill: "+ textFieldColor + ";");
+        longInput.setStyle("-fx-text-fill: " + textFieldColor + "; -fx-prompt-text-fill: "+ textFieldColor + ";");
+        latInput.setStyle("-fx-text-fill: " + textFieldColor + "; -fx-prompt-text-fill: "+ textFieldColor + ";");
+        zipCode.setStyle("-fx-text-fill: " + textFieldColor + "; -fx-prompt-text-fill: "+ textFieldColor + ";");
     }
 }
