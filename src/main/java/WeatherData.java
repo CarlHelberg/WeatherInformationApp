@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class WeatherData {
+    // Declare attributes for weatherData objects
     private double temperature;
     private String humidity;
     private String windSpeed;
@@ -25,25 +26,29 @@ public class WeatherData {
     private String latInput;
     private String countryCode;
     private String zipCode;
-    private String apiKey = "9165285debbbc2d2152db1a1e591d47e";
+    private String apiKey = "";
 
+    // Constructor with 2 values, can be called from initialization
     public WeatherData(String locationInformation, String unit) {
         this.locale = locationInformation;
         this.unit = unit;
     }
+
+    // Constructor with 3 values, since unit is always set it makes it easy to separate 2/3 args
     public WeatherData(String longInputOrZip,String latInputOrCountryCode, String unit) {
-        try {
+        try { // if we can decode the args, they are coordinates
              Long.decode(longInputOrZip);
              Long.decode(latInputOrCountryCode);
             this.longInput = longInputOrZip;
             this.latInput = latInputOrCountryCode;
-        }catch (Exception e){
+        }catch (Exception e){ // If we can't decode they are strings
             this.zipCode = longInputOrZip;
             this.countryCode = latInputOrCountryCode;
         }
-        this.unit = unit;
+        this.unit = unit; // no need to check, can just set
     }
 
+    // Full constructor, generated with IDE, kept for completeness
     public WeatherData(double temperature, String humidity, String windSpeed, String conditions, String icon, String latitude, String longitude, String countryCode, String zipCode) {
         this.temperature = temperature;
         this.humidity = humidity;
@@ -56,7 +61,7 @@ public class WeatherData {
         this.zipCode = zipCode;
     }
 
-    //Setters for all the private fields
+    //Getters for all the private fields
     public String getLocale() {
         return locale;
     }
@@ -100,62 +105,55 @@ public class WeatherData {
 
 //    Make request to weather API
     public void fetchWeather(){
+        // This else if checks which of the previous input checks failed
         if (!locale.equals("")){
-            System.out.println("Inside the First IF, locale not nil");
-                JSONObject json;
-
+                JSONObject json; // declare in preparation for APi call
 //        connects and asks the api to send the json file
                 try {
-                    System.out.println("Inside the weatherdata.fetchweather function");
-                    String url = buildGeocodingUrl(locale,countryCode,zipCode,unit);
-                    System.out.println("Building url, reading from url");
+                    String url = buildGeocodingUrl(locale,countryCode,zipCode,unit); // as long as locale isn't null we can pass the rest as null
                     json = readJsonFromUrl(url);
-                    System.out.println("end of fetchweather");
-//                    json = readJsonFromUrl("http://api.openweathermap.org/data/2.5/weather?q="+locale+"&appid="+apiKey+"&lang=eng&units="+unit);
                 } catch (IOException e) {
                     return;
                 }
+                applyWeatherData(json); // Apply or assign the json info to our data object
 
-                applyWeatherData(json);
-
-        }else if (!zipCode.equals("")&& !countryCode.equals("")) {
-            System.out.println("Fetching Weather from Zip Code");
-            fetchWeatherViaZip();
+        }else if (!zipCode.equals("") && !countryCode.equals("")) {
+            fetchWeatherViaZip(); // Make api call using zip code and country code
         } 
         else if (!latInput.equals("") && !longInput.equals("")) {
-            System.out.println("Fetching Weather from Coordinates");
-            fetchWeatherViaCoords();
+            fetchWeatherViaCoords(); // Make api call using coordinates
         }
     }
 
+    // Creates a string for a url to make an API call using the zip code
     public void fetchWeatherViaZip() {
 
         JSONObject json;
-        System.out.print("INSIDE fetchWeatherViaZip ");
         String zipUrl = ("https://api.openweathermap.org/data/2.5/weather?zip=" + zipCode + "," + countryCode + "&units="+unit +"&appid="+apiKey);
 
-//        https://api.openweathermap.org/data/2.5/weather?zip={zip code},{country code}&appid={API key}
         try {
             json = readJsonFromUrl(zipUrl);
-            applyWeatherData(json);
+            applyWeatherData(json); // read through JSON and assign values to weatherData object
         } catch (Exception e) {
             System.out.println("Invalid Params to get Weather.");
         }
     }
 
+    // Takes JSON data and assigns it to the correct attribute in the weatherData object
     public void applyWeatherData(JSONObject json){
-        JSONObject json_specific; //get specific data in jsonobject variable
+        JSONObject json_specific; //get specific data in json object variable
+
         SimpleDateFormat df2 = new SimpleDateFormat("EEEE", Locale.ENGLISH); //Entire word/day as output
         Calendar c = Calendar.getInstance();
         int d = 0;
 
         try {
-            this.locale = json.get("name").toString();
+            this.locale = json.get("name").toString(); // in some results of API call, name is a top level attribute
         }catch (Exception e){
             return;
         }
 
-
+    // Go through returned JSON and assign values to weatherData object.
         json_specific = json.getJSONObject("main");
         this.temperature = json_specific.getInt("temp");
 
@@ -176,14 +174,12 @@ public class WeatherData {
         this.conditions = json_specific.get("description").toString();
 
         this.weatherIcon = json_specific.get("icon").toString();
-
     }
 
 
 //
-    // Helper method to build the Geocoding API URL
+    // Helper method to build the Geocoding API URL to get weather data with zipcode and countrycode
     private String buildGeocodingUrl(String city, String country, String zip, String units) {
-        System.out.println("Inside buildGEO");
         StringBuilder url = new StringBuilder("https://api.openweathermap.org/data/2.5/");
         if (!Objects.equals(null, zip)) {
             url.append("zip?zip=").append(zip);
@@ -194,8 +190,6 @@ public class WeatherData {
 
         url.append("&units=").append(units);
         url.append("&appid=").append(apiKey);
-        System.out.println("End of build geo url");
-        System.out.println(url);
         return url.toString();
     }
 //
@@ -205,14 +199,12 @@ public class WeatherData {
         JSONObject json;
 
         String coordUrl = ("https://api.openweathermap.org/data/2.5/weather?lat=" + latInput+ "&lon="+ longInput + "&units="+unit +"&appid="+apiKey);
-        System.out.print("INSIDE fetchWeatherViaCoords: " + coordUrl);
-        System.out.print(" ");
 
         try {
             json = readJsonFromUrl(coordUrl);
             applyWeatherData(json);
         } catch (IOException e) {
-            return;
+            System.out.println("Invalid Params to fetch weather");
         }
     }
 }
