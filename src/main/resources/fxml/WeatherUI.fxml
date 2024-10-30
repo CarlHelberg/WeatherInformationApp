@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="670.0" prefWidth="1050.0" fx:id="mainLayout" xmlns:fx="http://javafx.com/fxml" fx:controller="WeatherUIController">
+
+    <Pane fx:id="topPane" layoutX="5.0" layoutY="561.0" prefHeight="106.0" prefWidth="1041.0">
+
+<!--        City name and Country     -->
+        <JFXTextField fx:id="locationInput" alignment="CENTER" focusColor="#364178" layoutX="426.0" layoutY="20.0"
+                      promptText="Enter City Name..." style="-fx-prompt-text-fill: #fff; -fx-text-fill: #364178;"
+                      unFocusColor="#fff">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+        <JFXTextField fx:id="countryCode" alignment="CENTER" focusColor="#364178" layoutX="426.0" layoutY="50.0"
+                      promptText="Country Code" style="-fx-prompt-text-fill: #fff; -fx-text-fill: #364178;"
+                      unFocusColor="#fff">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+        <JFXTextField fx:id="zipCode" alignment="CENTER" focusColor="#364178" layoutX="426.0" layoutY="80.0"
+                      promptText="Zip Code" style="-fx-prompt-text-fill: #fff; -fx-text-fill: #364178;"
+                      unFocusColor="#fff">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+
+<!--    ^^^^^^^^^^^^^^^^^^    END City name and Country    ^^^^^^^^^^^^^^^^ -->
+
+<!--        Coordinates     -->
+        <JFXTextField fx:id="longInput" alignment="CENTER" focusColor="#364178" layoutX="126.0" layoutY="20.0"
+                      promptText="-0.1257" style="-fx-prompt-text-fill: #fff; -fx-text-fill: #364178;"
+                      unFocusColor="#fff"
+        text="-0.1257">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+        <JFXTextField fx:id="latInput" alignment="CENTER" focusColor="#364178" layoutX="126.0" layoutY="50.0"
+                      promptText="51.5085" style="-fx-prompt-text-fill: #fff; -fx-text-fill: #364178;"
+                      unFocusColor="#fff"
+        text="51.5085">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+
+<!--    ^^^^^^^^^^^^^^^^^^    END Coordinates    ^^^^^^^^^^^^^^^^ -->
+        <JFXComboBox fx:id="unitSelector" focusColor="#364178" layoutX="460.0" layoutY="130.0" promptText="Unit"
+                     style="-fx-prompt-text-fill: #fff; -fx-text-fill: #fff;" unFocusColor="#fff"/>
+        <JFXButton fx:id="fetchWeather" layoutX="410.0" layoutY="180.0" onAction="#handleButtonClicks"
+                   style="-fx-background-radius: 10px; -fx-background-color: #38cb7e;" text="Fetch Weather"/>
+        <JFXButton fx:id="reset" layoutX="530.0" layoutY="180.0" onAction="#handleButtonClicks"
+                   style="-fx-background-radius: 10px; -fx-background-color: #38cb7e;" text="Reset Fields"/>
+
+
+    </Pane>
+    <Pane fx:id="bottomPane" layoutX="5.0" layoutY="7.0" prefHeight="464.0" prefWidth="1041.0">
+        <VBox.margin>
+            <Insets>
+                <top>100</top>
+            </Insets>
+        </VBox.margin>
+<!--        Center locale name & Time     -->
+        <Label fx:id="locale" alignment="CENTER" layoutX="254.0" layoutY="7.0" prefHeight="58.0" prefWidth="533.0" text=" " textFill="#fff">
+            <font>
+                <Font name="System Bold" size="40.0" />
+            </font>
+        </Label>
+
+<!--        Search History      -->
+        <JFXTextArea fx:id="history" text="Recent Searches:" layoutX="420.0" layoutY="350.0" prefHeight="70.0" prefWidth="250.0" style=" -fx-text-fill: #fff;" editable="false"/>
+
+
+<!--        Left Hand Bottom Pane header -->
+        <Label fx:id="weatherInfoLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="76.0" layoutY="7.0"
+               prefHeight="40.0" prefWidth="183.0" text="CURRENT WEATHER" textAlignment="CENTER" textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Label>
+<!--   ^^^^^^^^^^^^^^^^^^^^^^     Left Hand Bottom Pane header ^^^^^^^^^^^^^^^^^^^-->
+
+<!--        Left Hand Bottom Pane header -->
+        <Label fx:id="temperature" alignment="CENTER" layoutX="106.0" layoutY="328.0" prefHeight="58.0"
+               prefWidth="123.0" text=" " textFill="#fff">
+            <font>
+                <Font name="System Bold" size="40.0"/>
+            </font>
+        </Label>
+<!--         ICON -->
+        <ImageView fx:id="weatherIcon" fitHeight="200.0" fitWidth="200.0" layoutX="68.0" layoutY="104.0" pickOnBounds="true"
+                   preserveRatio="true"/>
+<!--         Day of Week  -->
+        <Label fx:id="day" alignment="CENTER" layoutX="83.0" layoutY="56.0" prefHeight="40.0" prefWidth="168.0"
+               text="DAY" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+<!--         Conditions  -->
+        <Label fx:id="conditions" alignment="CENTER" layoutX="50.0" layoutY="387.0" prefHeight="40.0" prefWidth="234.0"
+               text="Conditions" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+
+
+<!--        Right hand side LABEL-->
+        <Label alignment="CENTER" layoutX="825.0" layoutY="75.0" prefHeight="31.0" prefWidth="104.0" text="WIND SPEED :"
+               textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="825.0" layoutY="150.0" prefHeight="31.0" prefWidth="115.0" text="CLOUD COVER :"
+               textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="825.0" layoutY="225.0" prefHeight="31.0" prefWidth="104.0" text="PRESSURE:" textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="825.0" layoutY="300.0" prefHeight="31.0" prefWidth="104.0" text="HUMIDITY:" textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <!--        Right hand side header  -->
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="750.0" layoutY="7.0" prefHeight="40.0"
+               prefWidth="256.0" text="ADDITIONAL INFORMATION" textAlignment="CENTER" textFill="#22448a">
+            <font>
+                <Font name="System Bold" size="18.0"/>
+            </font>
+        </Label>
+        <!--   ^^^^^^^^^^^^^^^ END Right hand side header ^^^^^^^^^^^^^^^^^^^^^^-->
+<!--   ^^^^^^^^^^^^^^^ END Right hand side LABEL ^^^^^^^^^^^^^^^^^^^^^^-->
+
+                    <Label fx:id="errors" alignment="CENTER" layoutX="329.0" layoutY="72.0" prefHeight="40.0" prefWidth="383.0" text="Errors" textFill="WHITE">
+                        <font>
+                            <Font name="System Bold" size="15.0" />
+                        </font>
+                    </Label>
+
+<!--        Right hand side placeholder  -->
+        <JFXTextField id="txtField" fx:id="invis" alignment="CENTER" editable="false" focusColor="#36417800"
+                      labelFloat="true" layoutX="872.0" layoutY="54.0"
+                      style="-fx-prompt-text-fill: #fff; -fx-text-fill: #fff;" unFocusColor="#ffffff00">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </JFXTextField>
+<!--   ^^^^^^^^^^^^^^^ END Right hand side placeholder ^^^^^^^^^^^^^^^^^^^^^^-->
+
+
+<!--        Right hand side data  -->
+        <Label fx:id="windSpeed" alignment="CENTER" layoutX="825.0" layoutY="100.0" prefHeight="31.0" prefWidth="98.0"
+               text="m/s" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label fx:id="cloudCover" alignment="CENTER" layoutX="825.0" layoutY="175.0" prefHeight="31.0" prefWidth="98.0"
+               text="\%" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label fx:id="pressure" alignment="CENTER" layoutX="825.0" layoutY="250.0" prefHeight="31.0" prefWidth="98.0"
+               text="hpa" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+        <Label fx:id="humidity" alignment="CENTER" layoutX="825.0" layoutY="325.0" prefHeight="31.0" prefWidth="98.0"
+               text="\%" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="15.0"/>
+            </font>
+        </Label>
+<!--   ^^^^^^^^^^^^^^^ END Right hand side data ^^^^^^^^^^^^^^^^^^^^^^-->
+    </Pane>
+
+</VBox>
